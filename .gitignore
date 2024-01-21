@@ -1,3 +1,6 @@
+trainer/migrations*
+.vscode*
+
 # Django #
 *.log
 *.pot
