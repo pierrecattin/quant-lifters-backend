@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db import models
 
 class BodyPart(models.Model):
@@ -8,7 +9,7 @@ class BodyPart(models.Model):
     
     def serialize(self):
         return {
-                'name': self.name
+            'name': self.name
             }
     
 
@@ -28,11 +29,6 @@ class Exercise(models.Model):
             'primary_bodyparts': [bp.serialize() for bp in self.primary_bodyparts.all()],
             'secondary_bodyparts':  [bp.serialize() for bp in self.secondary_bodyparts.all()],
             }
-
-class User(models.Model):
-    name = models.CharField(max_length=200, primary_key=True)
-    def __str__(self):
-        return self.name
 
 class Workout(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
