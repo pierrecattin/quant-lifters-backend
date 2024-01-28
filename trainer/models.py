@@ -42,15 +42,10 @@ class Workout(models.Model):
     start_time = models.DateTimeField("Start time", auto_now=True)
     
     def __str__(self):
-        return "Workout at " + str(self.start_time)
+        return str([str(exercise_set) for exercise_set in self.exerciseset_set.all()])
 
-class SetGroup(models.Model):
+class ExerciseSet(models.Model):
     workout = models.ForeignKey(Workout, on_delete=models.CASCADE)
-    def __str__(self):
-        return "SetGroup in " + str(self.workout)
-
-class Set(models.Model):
-    setGroup = models.ForeignKey(SetGroup, on_delete=models.CASCADE)
     exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
     weight = models.DecimalField(decimal_places=1, max_digits=4)
     reps = models.IntegerField()
