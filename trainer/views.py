@@ -1,7 +1,8 @@
-from django.shortcuts import render
-
+from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 
+from trainer.models import Exercise
 
-def index(request):
-    return HttpResponse("Hello, world. You're at the index.")
+def getExercise(request, exercise_name:str):
+    exercise = get_object_or_404(Exercise, pk=exercise_name)
+    return HttpResponse(exercise.serialize())
