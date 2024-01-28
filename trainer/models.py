@@ -1,5 +1,4 @@
 from django.db import models
-import json
 
 class BodyPart(models.Model):
     name = models.CharField(max_length=50, primary_key=True)
@@ -8,10 +7,9 @@ class BodyPart(models.Model):
         return self.name
     
     def serialize(self):
-        dict = {
+        return {
                 'name': self.name
             }
-        return json.dumps(dict)
     
 
 class Exercise(models.Model):   
@@ -24,13 +22,12 @@ class Exercise(models.Model):
         return self.name
     
     def serialize(self):
-        dict = {
+        return {
             'name': self.name,
             'fatigue_factor': self.fatigue_factor,
             'primary_bodyparts': [bp.serialize() for bp in self.primary_bodyparts.all()],
             'secondary_bodyparts':  [bp.serialize() for bp in self.secondary_bodyparts.all()],
             }
-        return json.dumps(dict)
 
 class User(models.Model):
     name = models.CharField(max_length=200, primary_key=True)
