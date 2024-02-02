@@ -6,7 +6,7 @@ from rest_framework.parsers import JSONParser
 from rest_framework.decorators import api_view
 
 
-from trainer.models import Exercise, Workout
+from trainer.models import Exercise, Bodypart
 
 @api_view(['GET'])
 def GetExercise(request, exercise_name:str):
@@ -14,9 +14,14 @@ def GetExercise(request, exercise_name:str):
     return HttpResponse(dumps(exercise.serialize()))
 
 @api_view(['GET'])
-def AllExercisesNames(request):
+def AllExercises(request):
     exercises = Exercise.objects.all()
     return HttpResponse (dumps([e.serialize() for e in exercises]))
+
+@api_view(['GET'])
+def AllBodyparts(request):
+    bodyparts = Bodypart.objects.all()
+    return HttpResponse (dumps({"bodyparts":[str(b) for b in bodyparts]}))
 
 @api_view(['POST'])
 @csrf_exempt
