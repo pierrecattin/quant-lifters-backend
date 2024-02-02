@@ -10,7 +10,6 @@ class Bodypart(models.Model):
 
 class Exercise(models.Model):   
     name = models.CharField(max_length=100, primary_key=True)
-    fatigue_factor = models.IntegerField(null=True)
     primary_bodyparts = models.ManyToManyField(Bodypart, related_name="primary_bodyparts", blank=True)
     secondary_bodyparts = models.ManyToManyField(Bodypart, related_name="secondary_bodyparts", blank=True)
 
@@ -20,7 +19,6 @@ class Exercise(models.Model):
     def serialize(self):
         return {
             'name': self.name,
-            'fatigue_factor': self.fatigue_factor,
             'primary_bodyparts': [str(bp) for bp in self.primary_bodyparts.all()],
             'secondary_bodyparts':  [str(bp) for bp in self.secondary_bodyparts.all()],
             }
