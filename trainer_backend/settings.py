@@ -25,13 +25,13 @@ SECRET_KEY = 'django-insecure-3=6m=0m2v@m#&dqu@%c4kwfh_o82ikwy6w10tgkx(p=x&r07&v
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['192.168.72.108', 'localhost']
 
 
 # Application definition
 
 INSTALLED_APPS = [
-    "trainer.apps.TrainerConfig",
+    'trainer.apps.TrainerConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
