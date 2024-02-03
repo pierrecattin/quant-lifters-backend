@@ -7,4 +7,5 @@ urlpatterns = [
     path("allexercises/", views.AllExercises, name="allexercises"),
     path("allbodyparts/", views.AllBodyparts, name="allbodyparts"),
     path("addexercise", views.AddExercise, name="addexercise"),
+    path("addbodypart", views.AddBodypart, name="addbodypart"),
 ]

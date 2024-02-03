@@ -34,3 +34,11 @@ def AddExercise(request):
     exercise.save()
     return HttpResponse(dumps(exercise.serialize())) 
     
+@api_view(['POST'])
+@csrf_exempt
+def AddBodypart(request):
+    data = JSONParser().parse(request)
+    bodypart = Bodypart(name=data['name'])
+    bodypart.save()
+    return HttpResponse(dumps(str(bodypart))) 
+    
