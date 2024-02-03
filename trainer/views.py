@@ -29,5 +29,8 @@ def AddExercise(request):
     data = JSONParser().parse(request)
     exercise = Exercise(name=data['name'])
     exercise.save()
+    [exercise.primary_bodyparts.add(Bodypart.objects.get(pk=b)) for b in data['primary_bodyparts']]
+    [exercise.secondary_bodyparts.add(Bodypart.objects.get(pk=b)) for b in data['secondary_bodyparts']]
+    exercise.save()
     return HttpResponse(dumps(exercise.serialize())) 
     
