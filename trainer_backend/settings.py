@@ -21,10 +21,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = environ['DJANGO_SECRET_KEY']
+SECRET_KEY = environ['QUANT_LIFTERS_DJANGO_SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = 'PROD' not in environ
+DEBUG = 'QUANT_LIFTERS_PROD' not in environ
 
 ALLOWED_HOSTS = ['quant-lifters.onrender.com', '127.0.0.1', 'localhost']
 
@@ -81,8 +81,8 @@ DATABASES = {
         "ENGINE": "django.db.backends.postgresql",
         'NAME': 'quant_lifters',
         'USER': 'quant_lifters_user',
-        'PASSWORD': environ['RENDER_POSTGRE_PASSWORD'],
-        'HOST': environ['RENDER_POSTGRE_URL'],
+        'PASSWORD': environ['QUANT_LIFTERS_POSTGRE_PASSWORD'],
+        'HOST': environ['QUANT_LIFTERS_POSTGRE_URL'],
         'PORT': '5432',
     }
 }
