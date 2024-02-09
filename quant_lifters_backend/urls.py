@@ -1,5 +1,5 @@
 """
-URL configuration for trainer_backend project.
+URL configuration for quant_lifters_backend project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/5.0/topics/http/urls/
