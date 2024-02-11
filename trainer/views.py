@@ -17,16 +17,20 @@ from trainer.models import Exercise, Bodypart, User
 
 @api_view(['POST'])
 def login(request):
-    username = request.data.get('username')
+    email = request.data.get('email')
     password = request.data.get('password')
-    user = authenticate(username=username, password=password)
-    if user:
+    try:
+        user = User.objects.get(email=email)
+    except User.DoesNotExist:
+        return HttpResponse(dumps({"error": "Email not found"}), status=401)
+    user = User.objects.get(email=email)
+    if user.check_password(password):
         token, _ = Token.objects.get_or_create(user=user)
         response = HttpResponse()
         response["Set-Cookie"] =  'authToken='+token.key+"; SameSite=None; Secure; HttpOnly=true; Path=/; Max-Age=31536000"
         return response
     else:
-        return HttpResponse('Invalid login', status=401)
+        return HttpResponse(dumps({"error": 'Wrong password'}), status=401)
     
 @api_view(['GET'])
 @authentication_classes([TokenAuthViaCookie, BasicAuthentication])
