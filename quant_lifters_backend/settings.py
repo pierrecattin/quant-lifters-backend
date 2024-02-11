@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = environ['QUANT_LIFTERS_DJANGO_SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = 'QUANT_LIFTERS_PROD' not in environ
+DEBUG = 'QUANT_LIFTERS_NODEBUG' not in environ
 
 ALLOWED_HOSTS = ['quant-lifters.onrender.com', '127.0.0.1', 'localhost']
 
