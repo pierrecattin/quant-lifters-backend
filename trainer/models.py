@@ -10,8 +10,10 @@ class Bodypart(models.Model):
 
 class Exercise(models.Model):   
     name = models.CharField(max_length=100, primary_key=True)
+    is_unilateral = models.BooleanField(default=False)
     primary_bodyparts = models.ManyToManyField(Bodypart, related_name="primary_bodyparts", blank=True)
     secondary_bodyparts = models.ManyToManyField(Bodypart, related_name="secondary_bodyparts", blank=True)
+    user_if_custom = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
