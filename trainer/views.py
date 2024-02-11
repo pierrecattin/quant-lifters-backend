@@ -12,8 +12,21 @@ from rest_framework.parsers import JSONParser
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
 from trainer.serializers import UserSerializer
-from trainer.models import Exercise, Bodypart, User
+from trainer.models import Exercise, Bodypart
 
+
+@api_view(['POST'])
+@csrf_exempt  
+def CreateUser(request):
+    username = request.data.get('username') 
+    email = request.data.get('email')
+    password = request.data.get('password')
+    if User.objects.filter(username=username).exists():
+        return HttpResponse(dumps({"error": "Username already taken"}), status=409)
+    if User.objects.filter(email=email).exists():
+        return HttpResponse(dumps({"error": "Email already used"}), status=409)
+    user = User.objects.create_user(username, email, password)
+    return HttpResponse(dumps(UserSerializer(user).data))
 
 @api_view(['POST'])
 def login(request):
@@ -88,10 +101,3 @@ def CreateBodypart(request):
     bodypart = Bodypart(name=data['name'])
     bodypart.save()
     return HttpResponse(dumps(str(bodypart))) 
-
-@api_view(['POST'])
-@csrf_exempt  
-def CreateUser(request):
-    data = JSONParser().parse(request)
-    user = User.objects.create_user(data["username"], data["email"], data["password"])
-    return HttpResponse(dumps(UserSerializer(user).data))
