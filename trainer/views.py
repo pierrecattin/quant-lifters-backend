@@ -40,10 +40,16 @@ def login(request):
     if user.check_password(password):
         token, _ = Token.objects.get_or_create(user=user)
         response = HttpResponse()
-        response["Set-Cookie"] =  'authToken='+token.key+"; SameSite=None; Secure; HttpOnly=true; Path=/; Max-Age=31536000"
+        response["Set-Cookie"] =  "authToken="+token.key+"; SameSite=None; Secure; HttpOnly=true; Path=/; Max-Age=31536000"
         return response
     else:
         return HttpResponse(dumps({"error": 'Wrong password'}), status=401)
+    
+@api_view(['Get'])
+def logout(request):
+    response = HttpResponse()
+    response["Set-Cookie"] =  "authToken=x; SameSite=None; Secure; HttpOnly=true; Path=/; Max-Age=31536000"
+    return response
     
 @api_view(['GET'])
 @authentication_classes([TokenAuthViaCookie, BasicAuthentication])
