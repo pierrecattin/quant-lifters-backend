@@ -27,6 +27,12 @@ def login(request):
         return response
     else:
         return HttpResponse('Invalid login', status=401)
+    
+@api_view(['GET'])
+@authentication_classes([TokenAuthViaCookie, BasicAuthentication])
+def UserIsAuthenticated(request):
+    response = {"is_authenticated": request.user.is_authenticated}
+    return HttpResponse(dumps(response))
 
 @api_view(['GET'])
 @authentication_classes([TokenAuthViaCookie, BasicAuthentication])
@@ -60,7 +66,7 @@ def AllBodyparts(request):
 @authentication_classes([TokenAuthViaCookie, BasicAuthentication])
 @permission_classes([IsAdminUser])
 @csrf_exempt
-def AddExercise(request):
+def CreateExercise(request):
     data = JSONParser().parse(request)
     exercise = Exercise(name=data['name'])
     exercise.save()
@@ -73,7 +79,7 @@ def AddExercise(request):
 @authentication_classes([TokenAuthViaCookie, BasicAuthentication])
 @permission_classes([IsAdminUser])
 @csrf_exempt
-def AddBodypart(request):
+def CreateBodypart(request):
     data = JSONParser().parse(request)
     bodypart = Bodypart(name=data['name'])
     bodypart.save()
