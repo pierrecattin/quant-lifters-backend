@@ -8,15 +8,21 @@ class Bodypart(models.Model):
         return self.name
     
 
-class Exercise(models.Model):   
-    name = models.CharField(max_length=100, primary_key=True)
+class Exercise(models.Model):
+    name = models.CharField(max_length=100)
     is_unilateral = models.BooleanField(default=False)
     primary_bodyparts = models.ManyToManyField(Bodypart, related_name="primary_bodyparts", blank=True)
     secondary_bodyparts = models.ManyToManyField(Bodypart, related_name="secondary_bodyparts", blank=True)
-    user_if_custom = models.ForeignKey(User, on_delete=models.CASCADE, blank=True)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, blank=True)
+    shared_with = models.ManyToManyField(User, related_name="shared_with", blank=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['name', 'created_by'], name='unique_name_created_by_combination')
+        ]
 
     def __str__(self):
-        return self.name
+        return self.name +(" created by " + str(self.created_by) if self.created_by is None else "")
     
     def serialize(self):
         return {
