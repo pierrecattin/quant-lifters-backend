@@ -13,7 +13,7 @@ class Exercise(models.Model):
     is_unilateral = models.BooleanField(default=False)
     primary_bodyparts = models.ManyToManyField(Bodypart, related_name="primary_bodyparts", blank=True)
     secondary_bodyparts = models.ManyToManyField(Bodypart, related_name="secondary_bodyparts", blank=True)
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE, blank=True)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
     shared_with = models.ManyToManyField(User, related_name="shared_with", blank=True)
 
     class Meta:
