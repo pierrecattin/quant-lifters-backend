@@ -1,12 +1,10 @@
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 
-class Lifter(models.Model):
-    
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    bodyweight = models.FloatField(default=80.0)
+class User(AbstractUser):
 
+    bodyweight = models.FloatField(default=80.0)
     class Sex(models.TextChoices):
         MALE = 'male',
         FEMALE = 'female',
@@ -17,8 +15,7 @@ class Lifter(models.Model):
         default = Sex.MALE,
     )
 
-    def __str__(self):
-        return str(self.user)
+
 
 class Bodypart(models.Model):
     name = models.CharField(max_length=50, primary_key=True)
@@ -35,8 +32,8 @@ class Exercise(models.Model):
     is_unilateral = models.BooleanField(default=False)
     primary_bodyparts = models.ManyToManyField(Bodypart, related_name="primary_bodyparts", through='ExercisePrimaryBodypart')
     secondary_bodyparts = models.ManyToManyField(Bodypart, related_name="secondary_bodyparts",  through='ExerciseSecondaryBodypart')
-    created_by = models.ForeignKey(Lifter, on_delete=models.CASCADE, null=True, blank=True)
-    shared_with = models.ManyToManyField(Lifter, related_name="shared_with", through='ExerciseSharedWith')
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    shared_with = models.ManyToManyField(User, related_name="shared_with", through='ExerciseSharedWith')
 
     class Meta:
         constraints = [
@@ -56,10 +53,10 @@ class ExerciseSecondaryBodypart(models.Model):
 
 class ExerciseSharedWith(models.Model):
     exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
-    shared_with = models.ForeignKey(Lifter, on_delete=models.CASCADE)
+    shared_with = models.ForeignKey(User, on_delete=models.CASCADE)
 
 class Workout(models.Model):
-    lifter = models.ForeignKey(Lifter, on_delete=models.CASCADE)
+    lifter = models.ForeignKey(User, on_delete=models.CASCADE)
     start_time = models.DateTimeField("Start time", auto_now=True)
     
     def __str__(self):
@@ -76,7 +73,7 @@ class ExerciseSet(models.Model):
 
 
 class IntensityTable(models.Model):
-    lifter = models.ForeignKey(Lifter, on_delete=models.CASCADE)
+    lifter = models.ForeignKey(User, on_delete=models.CASCADE)
     exercise =  models.ForeignKey(Exercise, on_delete=models.CASCADE)
     percentages = models
     

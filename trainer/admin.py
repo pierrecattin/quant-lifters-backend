@@ -1,5 +1,4 @@
 from django.contrib import admin
-
 from .models import *
 
 class ExercisePrimaryBodypartInline(admin.TabularInline):
@@ -20,5 +19,5 @@ class ExerciseSharedWith(admin.TabularInline):
 class ExerciseAdmin(admin.ModelAdmin):
     inlines = [ExercisePrimaryBodypartInline, ExerciseSecondaryBodypartInline, ExerciseSharedWith]
 
-admin.site.register([ExerciseSet, Workout, Bodypart, Intensity, IntensityTable, Lifter])
+admin.site.register([ExerciseSet, Workout, Bodypart, Intensity, IntensityTable, User])
 admin.site.register(Exercise, ExerciseAdmin)

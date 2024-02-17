@@ -11,7 +11,7 @@ class UserSerializer(serializers.Serializer):
 class CompactUserSerializer(serializers.Serializer):
     username = serializers.CharField()
 
-class LifterSerializer(serializers.Serializer):
+class UserSerializer(serializers.Serializer):
     username = CompactUserSerializer(source='user')
 
 class BodypartSerializer(serializers.Serializer):
@@ -22,6 +22,6 @@ class ExerciseSerializer(serializers.Serializer):
     is_unilateral = serializers.BooleanField()
     primary_bodyparts = BodypartSerializer(many=True)
     secondary_bodyparts = BodypartSerializer(many=True)
-    created_by = LifterSerializer()
-    shared_with = LifterSerializer(many=True)
+    created_by = UserSerializer()
+    shared_with = UserSerializer(many=True)
 

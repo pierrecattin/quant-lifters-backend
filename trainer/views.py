@@ -1,7 +1,6 @@
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 from django.contrib.auth import authenticate
-from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 from json import dumps
 from rest_framework.authtoken.models import Token
@@ -12,7 +11,7 @@ from rest_framework.parsers import JSONParser
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
 from trainer.serializers import *
-from trainer.models import Exercise, Bodypart
+from trainer.models import Exercise, Bodypart, User
 
 
 @api_view(['POST'])
@@ -26,7 +25,6 @@ def CreateUser(request):
     if User.objects.filter(email=email).exists():
         return HttpResponse(dumps({"error": "Email already used"}), status=409)
     user = User.objects.create_user(username, email, password)
-    lifter = Lifter.objects.create(user = user)
     return HttpResponse(dumps(UserSerializer(user).data))
 
 @api_view(['POST'])

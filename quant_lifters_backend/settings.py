@@ -122,6 +122,8 @@ REST_FRAMEWORK = {
     ]
 }
 
+AUTH_USER_MODEL = "trainer.User"
+
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
