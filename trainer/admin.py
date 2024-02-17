@@ -2,4 +2,23 @@ from django.contrib import admin
 
 from .models import *
 
-admin.site.register([Exercise, ExerciseSet, Workout, Bodypart, Intensity, IntensityTable])
+class ExercisePrimaryBodypartInline(admin.TabularInline):
+    model = ExercisePrimaryBodypart
+    readonly_fields = ('id',)
+    extra = 1
+
+class ExerciseSecondaryBodypartInline(admin.TabularInline):
+    model = ExerciseSecondaryBodypart
+    readonly_fields = ('id',)
+    extra = 1
+
+class ExerciseSharedWith(admin.TabularInline):
+    model = ExerciseSharedWith
+    readonly_fields = ('id',)
+    extra = 1
+
+class ExerciseAdmin(admin.ModelAdmin):
+    inlines = [ExercisePrimaryBodypartInline, ExerciseSecondaryBodypartInline, ExerciseSharedWith]
+
+admin.site.register([ExerciseSet, Workout, Bodypart, Intensity, IntensityTable, Lifter])
+admin.site.register(Exercise, ExerciseAdmin)

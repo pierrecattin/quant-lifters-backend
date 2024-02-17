@@ -11,7 +11,7 @@ from trainer.auth import TokenAuthViaCookie
 from rest_framework.parsers import JSONParser 
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
-from trainer.serializers import UserSerializer
+from trainer.serializers import *
 from trainer.models import Exercise, Bodypart
 
 
@@ -26,6 +26,7 @@ def CreateUser(request):
     if User.objects.filter(email=email).exists():
         return HttpResponse(dumps({"error": "Email already used"}), status=409)
     user = User.objects.create_user(username, email, password)
+    lifter = Lifter.objects.create(user = user)
     return HttpResponse(dumps(UserSerializer(user).data))
 
 @api_view(['POST'])
@@ -67,23 +68,16 @@ def GetUserDetails(request):
 @api_view(['GET'])
 @authentication_classes([TokenAuthViaCookie, BasicAuthentication])
 @permission_classes([IsAuthenticated])
-def GetExercise(request, exercise_name:str):
-    exercise = get_object_or_404(Exercise, pk=exercise_name)
-    return HttpResponse(dumps(exercise.serialize()))
-
-@api_view(['GET'])
-@authentication_classes([TokenAuthViaCookie, BasicAuthentication])
-@permission_classes([IsAuthenticated])
 def AllExercises(request):
     exercises = Exercise.objects.all()
-    return HttpResponse(dumps([e.serialize() for e in exercises]))
+    return HttpResponse(dumps({"exercises":[ExerciseSerializer(e).data for e in exercises]}))
 
 @api_view(['GET'])
 @authentication_classes([TokenAuthViaCookie, BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def AllBodyparts(request):
     bodyparts = Bodypart.objects.all()
-    return HttpResponse(dumps({"bodyparts":[str(b) for b in bodyparts]}))
+    return HttpResponse(dumps({"bodyparts":[BodypartSerializer(b).data for b in bodyparts]}))
 
 @api_view(['POST'])
 @authentication_classes([TokenAuthViaCookie, BasicAuthentication])

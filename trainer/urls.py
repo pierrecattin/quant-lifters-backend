@@ -7,7 +7,6 @@ urlpatterns = [
     path("logout", views.logout, name="logout"),
     path("userisauthenticated", views.UserIsAuthenticated, name="userisauthenticated"),
     path("createuser", views.CreateUser, name="createuser"),
-    path("exercise/<exercise_name>/", views.GetExercise, name="exercise"),
     path("allexercises/", views.AllExercises, name="allexercises"),
     path("allbodyparts/", views.AllBodyparts, name="allbodyparts"),
     path("createexercise", views.CreateExercise, name="addexercise"),
