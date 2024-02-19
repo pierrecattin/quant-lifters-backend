@@ -16,7 +16,7 @@ from trainer.models import Exercise, Bodypart, User
 
 @api_view(['POST'])
 @csrf_exempt  
-def CreateUser(request):
+def create_user(request):
     username = request.data.get('username') 
     email = request.data.get('email')
     password = request.data.get('password')
@@ -52,28 +52,42 @@ def logout(request):
     
 @api_view(['GET'])
 @authentication_classes([TokenAuthViaCookie, BasicAuthentication])
-def UserIsAuthenticated(request):
+def user_is_authenticated(request):
     response = {"is_authenticated": request.user.is_authenticated}
     return HttpResponse(dumps(response))
 
 @api_view(['GET'])
 @authentication_classes([TokenAuthViaCookie, BasicAuthentication])
 @permission_classes([IsAuthenticated])
-def GetUserDetails(request):
+def user_details(request):
     user = User.objects.get(username=request.user)
     return HttpResponse(dumps(UserSerializer(user).data))
 
 @api_view(['GET'])
 @authentication_classes([TokenAuthViaCookie, BasicAuthentication])
 @permission_classes([IsAuthenticated])
-def AllExercises(request):
-    exercises = Exercise.objects.all()
-    return HttpResponse(dumps({"exercises":[ExerciseSerializer(e).data for e in exercises]}))
+def user_exercises_log(request):
+    user = request.user
+
+    exercises = Exercise.objects.filter(
+        models.Q(created_by__isnull=True) |
+        models.Q(created_by=user) |
+        models.Q(shared_with=user)
+        ).distinct()
+
+    exercises_data = []
+    for exercise in exercises:
+        exercise_data = ExerciseSerializer(exercise).data
+        exercise_sets = ExerciseSet.objects.filter(exercise=exercise, workout__user=user)
+        exercise_data['sets'] = ExerciseSetSerializer(exercise_sets, many=True).data
+        exercises_data.append(exercise_data)
+
+    return HttpResponse(dumps({"exercises":exercises_data}))
 
 @api_view(['GET'])
 @authentication_classes([TokenAuthViaCookie, BasicAuthentication])
 @permission_classes([IsAuthenticated])
-def AllBodyparts(request):
+def all_bodyparts(request):
     bodyparts = Bodypart.objects.all()
     return HttpResponse(dumps({"bodyparts":[BodypartSerializer(b).data for b in bodyparts]}))
 
@@ -81,7 +95,7 @@ def AllBodyparts(request):
 @authentication_classes([TokenAuthViaCookie, BasicAuthentication])
 @permission_classes([IsAdminUser])
 @csrf_exempt
-def CreateExercise(request):
+def create_exercise(request):
     data = JSONParser().parse(request)
     exercise = Exercise(name=data['name'])
     exercise.save()
@@ -94,7 +108,7 @@ def CreateExercise(request):
 @authentication_classes([TokenAuthViaCookie, BasicAuthentication])
 @permission_classes([IsAdminUser])
 @csrf_exempt
-def CreateBodypart(request):
+def create_bodypart(request):
     data = JSONParser().parse(request)
     bodypart = Bodypart(name=data['name'])
     bodypart.save()
