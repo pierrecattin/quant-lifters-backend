@@ -42,6 +42,9 @@ class Exercise(models.Model):
 
     def __str__(self):
         return self.name +("" if self.created_by is None else " created by " + str(self.created_by))
+    
+    def is_custom(self):
+        return self.created_by is not None
 
 class ExercisePrimaryBodypart(models.Model):
     exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
@@ -56,7 +59,7 @@ class ExerciseSharedWith(models.Model):
     shared_with = models.ForeignKey(User, on_delete=models.CASCADE)
 
 class Workout(models.Model):
-    lifter = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     start_time = models.DateTimeField("Start time", auto_now=True)
     
     def __str__(self):
@@ -73,12 +76,12 @@ class ExerciseSet(models.Model):
 
 
 class IntensityTable(models.Model):
-    lifter = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     exercise =  models.ForeignKey(Exercise, on_delete=models.CASCADE)
     percentages = models
     
     def __str__(self):
-        return str(self.exercise) + " instensity table for " + str(self.lifter) + ": " +  str(self.intensity_set.all())
+        return str(self.exercise) + " instensity table for " + str(self.user) + ": " +  str(self.intensity_set.all())
 
 class Intensity(models.Model):
     intensityTable = models.ForeignKey(IntensityTable, on_delete=models.CASCADE)
