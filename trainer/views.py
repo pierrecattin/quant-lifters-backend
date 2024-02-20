@@ -1,6 +1,4 @@
-from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
-from django.contrib.auth import authenticate
 from django.views.decorators.csrf import csrf_exempt
 from json import dumps
 from rest_framework.authtoken.models import Token
@@ -8,7 +6,7 @@ from rest_framework.decorators import api_view, authentication_classes, permissi
 from rest_framework.authentication import BasicAuthentication
 from trainer.auth import TokenAuthViaCookie
 from rest_framework.parsers import JSONParser 
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, IsAdminUser
 
 from trainer.serializers import *
 from trainer.models import Exercise, Bodypart, User
@@ -90,6 +88,30 @@ def user_exercises_log(request):
 def all_bodyparts(request):
     bodyparts = Bodypart.objects.all()
     return HttpResponse(dumps({"bodyparts":[BodypartSerializer(b).data for b in bodyparts]}))
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthViaCookie, BasicAuthentication])
+@permission_classes([IsAuthenticatedOrReadOnly])
+def save_exercise_sets(request):
+    data = JSONParser().parse(request)
+    exercise_sets_data = data["sets"]
+    exercise_id = data["exercise_id"]
+    time = data["time"]
+
+    workout = Workout(user=request.user, start_time=time)
+    workout.save()
+
+    exercise = Exercise.objects.get(pk=exercise_id)
+    for set_data in exercise_sets_data:
+        exercise_set = ExerciseSet(workout=workout,
+                                   exercise=exercise,
+                                   reps=int(set_data["reps"]),
+                                   weight=float(set_data["weight"]),
+                                   rir=int(set_data["rir"]))
+        exercise_set.save()
+        
+    return HttpResponse()
+
 
 @api_view(['POST'])
 @authentication_classes([TokenAuthViaCookie, BasicAuthentication])

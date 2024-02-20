@@ -17,7 +17,7 @@ class BodypartSerializer(serializers.Serializer):
     name = serializers.CharField()
 
 class ExerciseSerializer(serializers.Serializer):
-    pk = serializers.IntegerField()
+    id = serializers.IntegerField()
     name = serializers.CharField()
     is_unilateral = serializers.BooleanField()
     primary_bodyparts = BodypartSerializer(many=True)
