@@ -37,3 +37,4 @@ class ExerciseSetSerializer(serializers.Serializer):
     weight = serializers.DecimalField(max_digits=5, decimal_places=2)
     reps = serializers.IntegerField()
     rir = serializers.IntegerField()
+    wilksScore = serializers.DecimalField(max_digits=5, decimal_places=2)

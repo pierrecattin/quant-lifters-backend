@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+import numpy as np
 
 class User(AbstractUser):
 
@@ -61,6 +62,7 @@ class ExerciseSharedWith(models.Model):
 class Workout(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     start_time = models.DateTimeField("Start time", auto_now=True)
+    bodyweight = models.FloatField(default=80.0)
     
     def __str__(self):
         return str([str(exercise_set) for exercise_set in self.exerciseset_set.all()])
@@ -71,6 +73,17 @@ class ExerciseSet(models.Model):
     weight = models.DecimalField(decimal_places=1, max_digits=4)
     reps = models.IntegerField()
     rir = models.IntegerField(blank=True)
+    
+    @property
+    def wilksScore(self):
+        if self.workout.user.sex == 'female':
+            wilksFormulaConstants = np.array([594.31747775582, -27.23842536447, 0.82112226871, -0.00930733913, 0.00004731582, -0.00000009054])
+        else:
+            wilksFormulaConstants = np.array([-216.0475144, 16.2606339, -0.002388645, -0.00113732, 0.00000701863, -0.00000001291])
+        powersOfBodyweight = np.array([pow(self.workout.user.bodyweight, power) for power in range(6)])
+        wilksCoefficient = 500 / np.dot(powersOfBodyweight, wilksFormulaConstants)
+        return float(self.weight) * wilksCoefficient
+    
     def __str__(self):
         return str(self.exercise) + " " + str(self.reps) + "x" + str(self.weight) + "kg@RIR" + str(self.rir)
 
@@ -81,7 +94,7 @@ class IntensityTable(models.Model):
     percentages = models
     
     def __str__(self):
-        return str(self.exercise) + " instensity table for " + str(self.user) + ": " +  str(self.intensity_set.all())
+        return str(self.exercise) + " intensity table for " + str(self.user) + ": " +  str(self.intensity_set.all())
 
 class Intensity(models.Model):
     intensityTable = models.ForeignKey(IntensityTable, on_delete=models.CASCADE)

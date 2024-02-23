@@ -98,7 +98,7 @@ def save_exercise_sets(request):
     exercise_id = data["exercise_id"]
     time = data["time"]
 
-    workout = Workout(user=request.user, start_time=time)
+    workout = Workout(user=request.user, start_time=time, bodyweight=request.user.bodyweight)
     workout.save()
 
     exercise = Exercise.objects.get(pk=exercise_id)
