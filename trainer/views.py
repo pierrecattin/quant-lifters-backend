@@ -114,6 +114,38 @@ def save_exercise_sets(request):
     response = [ExerciseSetSerializer(s).data for s in exercise_sets]
     return HttpResponse(dumps(response))
 
+@api_view(['POST'])
+@authentication_classes([TokenAuthViaCookie, BasicAuthentication])
+@permission_classes([IsAuthenticatedOrReadOnly])
+def update_exercise_sets(request):
+    # TODO: prevent modifying sets of other users
+    data = JSONParser().parse(request)
+    exercise_sets_data = data["sets"]
+
+    exercise_sets = []
+    for set_data in exercise_sets_data:
+        exercise_set = ExerciseSet.objects.get(pk=set_data["id"])
+        exercise_set.reps = set_data["reps"]
+        exercise_set.weight = set_data["weight"]
+        exercise_set.rir = set_data["rir"]
+        exercise_set.save()
+        exercise_sets.append(exercise_set)
+    response = [ExerciseSetSerializer(s).data for s in exercise_sets]
+    return HttpResponse(dumps(response))
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthViaCookie, BasicAuthentication])
+@permission_classes([IsAuthenticatedOrReadOnly])
+def delete_exercise_sets(request):
+    # TODO: prevent deleting sets of other users
+    data = JSONParser().parse(request)
+    set_ids = data["ids"]
+
+    for set_id in set_ids:
+        exercise_set = ExerciseSet.objects.get(pk=set_id)
+        exercise_set.delete()
+    return HttpResponse()
+
 
 @api_view(['POST'])
 @authentication_classes([TokenAuthViaCookie, BasicAuthentication])
