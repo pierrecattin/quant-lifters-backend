@@ -33,6 +33,7 @@ class WorkoutSerializer(serializers.Serializer):
     start_time = serializers.DateTimeField()
 
 class ExerciseSetSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
     workout = WorkoutSerializer()
     weight = serializers.DecimalField(max_digits=5, decimal_places=2)
     reps = serializers.IntegerField()

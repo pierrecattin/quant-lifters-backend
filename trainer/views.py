@@ -102,6 +102,7 @@ def save_exercise_sets(request):
     workout.save()
 
     exercise = Exercise.objects.get(pk=exercise_id)
+    exercise_sets = []
     for set_data in exercise_sets_data:
         exercise_set = ExerciseSet(workout=workout,
                                    exercise=exercise,
@@ -109,8 +110,9 @@ def save_exercise_sets(request):
                                    weight=float(set_data["weight"]),
                                    rir=int(set_data["rir"]))
         exercise_set.save()
-        
-    return HttpResponse()
+        exercise_sets.append(exercise_set)
+    response = [ExerciseSetSerializer(s).data for s in exercise_sets]
+    return HttpResponse(dumps(response))
 
 
 @api_view(['POST'])
