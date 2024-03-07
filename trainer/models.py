@@ -19,20 +19,39 @@ class User(AbstractUser):
 
 
 class Bodypart(models.Model):
-    name = models.CharField(max_length=50, primary_key=True)
+    name = models.CharField(max_length=50, unique=True)
 
     def __str__(self):
         return self.name
 
+   
+class ExerciseFamily(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    primary_bodyparts = models.ManyToManyField(Bodypart, related_name="primary_bodyparts", through='ExerciseFamilyPrimaryBodypart')
+    secondary_bodyparts = models.ManyToManyField(Bodypart, related_name="secondary_bodyparts",  through='ExerciseFamilySecondaryBodypart')
+
+    def __str__(self):
+        return self.name
+
+
+class ExerciseFamilyPrimaryBodypart(models.Model):
+    exercise_family = models.ForeignKey(ExerciseFamily, on_delete=models.CASCADE)
+    primary_bodypart = models.ForeignKey(Bodypart, on_delete=models.CASCADE)
+
+
+class ExerciseFamilySecondaryBodypart(models.Model):
+    exercise_family = models.ForeignKey(ExerciseFamily, on_delete=models.CASCADE)
+    secondary_bodypart = models.ForeignKey(Bodypart, on_delete=models.CASCADE)
+
+
 #todo: add constraint that primary bodypart <> secondary bodypart
 #todo: add constraint that you cannot share with yourself
 #todo: "shared with" in admin dashboard adds an s: shared withs
-   
+
 class Exercise(models.Model):
     name = models.CharField(max_length=100)
     is_unilateral = models.BooleanField(default=False)
-    primary_bodyparts = models.ManyToManyField(Bodypart, related_name="primary_bodyparts", through='ExercisePrimaryBodypart')
-    secondary_bodyparts = models.ManyToManyField(Bodypart, related_name="secondary_bodyparts",  through='ExerciseSecondaryBodypart')
+    exercise_family = models.ForeignKey(ExerciseFamily, on_delete=models.CASCADE)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     shared_with = models.ManyToManyField(User, related_name="shared_with", through='ExerciseSharedWith')
 
@@ -47,13 +66,6 @@ class Exercise(models.Model):
     def is_custom(self):
         return self.created_by is not None
 
-class ExercisePrimaryBodypart(models.Model):
-    exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
-    primary_bodypart = models.ForeignKey(Bodypart, on_delete=models.CASCADE)
-
-class ExerciseSecondaryBodypart(models.Model):
-    exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
-    secondary_bodypart = models.ForeignKey(Bodypart, on_delete=models.CASCADE)
 
 class ExerciseSharedWith(models.Model):
     exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)

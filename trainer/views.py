@@ -9,7 +9,7 @@ from rest_framework.parsers import JSONParser
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, IsAdminUser
 
 from trainer.serializers import *
-from trainer.models import Exercise, Bodypart, User
+from trainer.models import *
 
 
 @api_view(['POST'])
@@ -153,12 +153,9 @@ def delete_exercise_sets(request):
 @csrf_exempt
 def create_exercise(request):
     data = JSONParser().parse(request)
-    exercise = Exercise(name=data['name'])
+    exercise = Exercise(name=data['name'], exercise_family=ExerciseFamily.objects.get(name=data['exercise_family']))
     exercise.save()
-    [exercise.primary_bodyparts.add(Bodypart.objects.get(pk=b)) for b in data['primary_bodyparts']]
-    [exercise.secondary_bodyparts.add(Bodypart.objects.get(pk=b)) for b in data['secondary_bodyparts']]
-    exercise.save()
-    return HttpResponse(dumps(exercise.serialize())) 
+    return HttpResponse(dumps(ExerciseSerializer(exercise).data)) 
     
 @api_view(['POST'])
 @authentication_classes([TokenAuthViaCookie, BasicAuthentication])
@@ -169,3 +166,16 @@ def create_bodypart(request):
     bodypart = Bodypart(name=data['name'])
     bodypart.save()
     return HttpResponse(dumps(str(bodypart))) 
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthViaCookie, BasicAuthentication])
+@permission_classes([IsAdminUser])
+@csrf_exempt
+def create_exercise_family(request):
+    data = JSONParser().parse(request)
+    exercise_family = ExerciseFamily(name=data['name'])
+    exercise_family.save()
+    [exercise_family.primary_bodyparts.add(Bodypart.objects.get(name=b)) for b in data['primary_bodyparts']]
+    [exercise_family.secondary_bodyparts.add(Bodypart.objects.get(name=b)) for b in data['secondary_bodyparts']]
+    exercise_family.save()
+    return HttpResponse(dumps(ExerciseFamilySerializer(exercise_family).data))

@@ -13,6 +13,7 @@ urlpatterns = [
     path("deleteexercisesets", views.delete_exercise_sets, name= "deleteexercisesets"),
     path("updateexercisesets", views.update_exercise_sets, name= "updateexercisesets"),
     path("createexercise", views.create_exercise, name="addexercise"),
+    path("createexercisefamily", views.create_exercise_family, name="addexercisefamily"),
     path("createbodypart", views.create_bodypart, name="addbodypart"),
     path("userdetails", views.user_details, name="userdetails"),
 ]

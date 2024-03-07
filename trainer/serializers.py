@@ -16,15 +16,19 @@ class CompactUserSerializer(serializers.Serializer):
 class BodypartSerializer(serializers.Serializer):
     name = serializers.CharField()
 
+class ExerciseFamilySerializer(serializers.Serializer):
+    name = serializers.CharField()
+    primary_bodyparts = BodypartSerializer(many=True)
+    secondary_bodyparts = BodypartSerializer(many=True)
+
 class ExerciseSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     name = serializers.CharField()
     is_unilateral = serializers.BooleanField()
-    primary_bodyparts = BodypartSerializer(many=True)
-    secondary_bodyparts = BodypartSerializer(many=True)
     created_by = CompactUserSerializer()
     shared_with = CompactUserSerializer(many=True)
     is_custom = serializers.SerializerMethodField()
+    exercise_family = ExerciseFamilySerializer()
 
     def get_is_custom(self, exercise):
         return exercise.is_custom()
