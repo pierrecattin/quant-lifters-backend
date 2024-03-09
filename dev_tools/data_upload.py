@@ -5,7 +5,7 @@ auth = HTTPBasicAuth('username', 'password')
 
 backend_url = ['http://localhost:8000/trainer/', 'https://quant-lifters.onrender.com/trainer/'][0]
 
-file = "./DevTools/initial_data.xlsx"
+file = "./dev_tools/initial_data.xlsx"
 bodyparts = pd.read_excel(file, sheet_name="bodyparts", header=0)
 exercises = pd.read_excel(file, sheet_name="exercises", header=0)
 exercise_families = pd.read_excel(file, sheet_name="exercise_families", header=0)
