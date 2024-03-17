@@ -22,6 +22,11 @@ class ExerciseAdmin(admin.ModelAdmin):
 class ExerciseFamilyAdmin(admin.ModelAdmin):
     inlines = [ExerciseFamilyPrimaryBodypartInline, ExerciseFamilySecondaryBodypartInline]
 
-admin.site.register([ExerciseSet, Workout, Bodypart, Intensity, IntensityTable, User])
+class UserAdmin(admin.ModelAdmin):
+    search_fields = ("email", )
+
+
+admin.site.register([ExerciseSet, Workout, Bodypart, Intensity, IntensityTable])
 admin.site.register(Exercise, ExerciseAdmin)
 admin.site.register(ExerciseFamily, ExerciseFamilyAdmin)
+admin.site.register(User, UserAdmin)
