@@ -8,6 +8,7 @@ urlpatterns = [
     path("userisauthenticated", views.user_is_authenticated, name="userisauthenticated"),
     path("createuser", views.create_user, name="createuser"),
     path("userexerciseslog", views.user_exercises_log, name="userexercisedata"),
+    path('workoutslog', views.workoutslog, name='workoutslog'),
     path("allbodyparts", views.all_bodyparts, name="allbodyparts"),
     path("saveexercisesets", views.save_exercise_sets, name= "saveexercisesets"),
     path("deleteexercisesets", views.delete_exercise_sets, name= "deleteexercisesets"),

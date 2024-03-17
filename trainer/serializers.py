@@ -32,13 +32,26 @@ class ExerciseSerializer(serializers.Serializer):
 
     def get_is_custom(self, exercise):
         return exercise.is_custom()
-    
+
+class CompactExerciseSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    name = serializers.CharField()
+
 class WorkoutSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
     start_time = serializers.DateTimeField()
 
-class ExerciseSetSerializer(serializers.Serializer):
+class ExerciseSetSerializerWithWorkout(serializers.Serializer):
     id = serializers.IntegerField()
     workout = WorkoutSerializer()
+    weight = serializers.DecimalField(max_digits=5, decimal_places=2)
+    reps = serializers.IntegerField()
+    rir = serializers.IntegerField()
+    wilksScore = serializers.DecimalField(max_digits=5, decimal_places=2)
+
+class ExerciseSetSerializerWithExercise(serializers.Serializer):
+    id = serializers.IntegerField()
+    exercise = CompactExerciseSerializer()
     weight = serializers.DecimalField(max_digits=5, decimal_places=2)
     reps = serializers.IntegerField()
     rir = serializers.IntegerField()

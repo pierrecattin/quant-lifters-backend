@@ -77,10 +77,25 @@ def user_exercises_log(request):
     for exercise in exercises:
         exercise_data = ExerciseSerializer(exercise).data
         exercise_sets = ExerciseSet.objects.filter(exercise=exercise, workout__user=user)
-        exercise_data['sets'] = ExerciseSetSerializer(exercise_sets, many=True).data
+        exercise_data['sets'] = ExerciseSetSerializerWithWorkout(exercise_sets, many=True).data
         exercises_data.append(exercise_data)
 
     return HttpResponse(dumps({"exercises":exercises_data}))
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthViaCookie, BasicAuthentication])
+@permission_classes([IsAuthenticated])
+def workoutslog(request):
+    user = request.user
+    workouts = Workout.objects.filter(user=user)
+    workouts_data = []
+    for workout in workouts:
+        exercise_sets = ExerciseSet.objects.filter(workout=workout)
+        if len(exercise_sets) > 0: 
+            workout_data = WorkoutSerializer(workout).data
+            workout_data['sets'] = ExerciseSetSerializerWithExercise(exercise_sets, many=True).data
+            workouts_data.append(workout_data)
+    return HttpResponse(dumps({"workouts": workouts_data}))
 
 @api_view(['GET'])
 @authentication_classes([TokenAuthViaCookie, BasicAuthentication])
@@ -111,7 +126,7 @@ def save_exercise_sets(request):
                                    rir=int(set_data["rir"]))
         exercise_set.save()
         exercise_sets.append(exercise_set)
-    response = [ExerciseSetSerializer(s).data for s in exercise_sets]
+    response = [ExerciseSetSerializerWithWorkout(s).data for s in exercise_sets]
     return HttpResponse(dumps(response))
 
 @api_view(['POST'])
@@ -130,7 +145,7 @@ def update_exercise_sets(request):
         exercise_set.rir = set_data["rir"]
         exercise_set.save()
         exercise_sets.append(exercise_set)
-    response = [ExerciseSetSerializer(s).data for s in exercise_sets]
+    response = [ExerciseSetSerializerWithWorkout(s).data for s in exercise_sets]
     return HttpResponse(dumps(response))
 
 @api_view(['POST'])
