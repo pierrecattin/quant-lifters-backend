@@ -10,6 +10,7 @@ from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnl
 
 from trainer.serializers import *
 from trainer.models import *
+from trainer.rankings import *
 
 
 @api_view(['POST'])
@@ -194,3 +195,9 @@ def create_exercise_family(request):
     [exercise_family.secondary_bodyparts.add(Bodypart.objects.get(name=b)) for b in data['secondary_bodyparts']]
     exercise_family.save()
     return HttpResponse(dumps(ExerciseFamilySerializer(exercise_family).data))
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthViaCookie, BasicAuthentication])
+@permission_classes([IsAuthenticated])
+def all_rankings(request):
+    return HttpResponse(dumps({"AllRankings":get_all_rankings()}))

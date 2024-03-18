@@ -17,4 +17,5 @@ urlpatterns = [
     path("createexercisefamily", views.create_exercise_family, name="addexercisefamily"),
     path("createbodypart", views.create_bodypart, name="addbodypart"),
     path("userdetails", views.user_details, name="userdetails"),
+    path("allrankings", views.all_rankings, name="allrankings"),
 ]
