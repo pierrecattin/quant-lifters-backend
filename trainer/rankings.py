@@ -23,6 +23,6 @@ total_lifted_volume_query = (ExerciseSet.objects
 
 def get_all_rankings():
     return [
-        ranking_query_set_to_json(most_exercise_sets_query, 'Most exercise sets', ['workout__user__username', 'number_sets'], ['User', 'Total number of sets']),
-        ranking_query_set_to_json(total_lifted_volume_query, 'Total lifted volume', ['workout__user__username', 'volume'], ['User', 'Total lifted volume'])
+        ranking_query_set_to_json(most_exercise_sets_query.all(), 'Most exercise sets', ['workout__user__username', 'number_sets'], ['User', 'Total number of sets']),
+        ranking_query_set_to_json(total_lifted_volume_query.all(), 'Total lifted volume', ['workout__user__username', 'volume'], ['User', 'Total lifted volume'])
     ]
