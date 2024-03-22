@@ -17,9 +17,16 @@ class BodypartSerializer(serializers.Serializer):
     name = serializers.CharField()
 
 class ExerciseFamilySerializer(serializers.Serializer):
+    id = serializers.IntegerField()
     name = serializers.CharField()
     primary_bodyparts = BodypartSerializer(many=True)
     secondary_bodyparts = BodypartSerializer(many=True)
+    created_by = CompactUserSerializer()
+    shared_with = CompactUserSerializer(many=True)
+    is_custom = serializers.SerializerMethodField()
+
+    def get_is_custom(self, exercise_family):
+        return exercise_family.is_custom()
 
 class ExerciseSerializer(serializers.Serializer):
     id = serializers.IntegerField()

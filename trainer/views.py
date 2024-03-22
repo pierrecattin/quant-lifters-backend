@@ -66,27 +66,46 @@ def user_details(request):
 @authentication_classes([TokenAuthViaCookie, BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def user_exercises_log(request):
+    # TODO: make more efficient
     user = request.user
+
+    exercise_families = ExerciseFamily.objects.filter(
+        models.Q(created_by__isnull=True) |
+        models.Q(created_by=user) |
+        models.Q(shared_with=user)
+        )
 
     exercises = Exercise.objects.filter(
         models.Q(created_by__isnull=True) |
         models.Q(created_by=user) |
         models.Q(shared_with=user)
-        ).distinct()
+        )
+    
+    exercise_families_data = []
+    for exercise_family in exercise_families:
+        exercises = Exercise.objects.filter(
+            models.Q(exercise_family=exercise_family) & (
+            models.Q(created_by__isnull=True) |
+            models.Q(created_by=user) |
+            models.Q(shared_with=user))
+        )
+        exercises_data = []
+        for exercise in exercises:
+            exercise_data = ExerciseSerializer(exercise).data
+            exercise_sets = ExerciseSet.objects.filter(exercise=exercise, workout__user=user)
+            exercise_data["sets"] = ExerciseSetSerializerWithWorkout(exercise_sets, many=True).data
+            exercises_data.append(exercise_data)
+        exercise_familiy_data = ExerciseFamilySerializer(exercise_family).data
+        exercise_familiy_data["exercises"] = exercises_data
+        exercise_families_data.append(exercise_familiy_data)
 
-    exercises_data = []
-    for exercise in exercises:
-        exercise_data = ExerciseSerializer(exercise).data
-        exercise_sets = ExerciseSet.objects.filter(exercise=exercise, workout__user=user)
-        exercise_data['sets'] = ExerciseSetSerializerWithWorkout(exercise_sets, many=True).data
-        exercises_data.append(exercise_data)
-
-    return HttpResponse(dumps({"exercises":exercises_data}))
+    return HttpResponse(dumps({"exercise_families": exercise_families_data}))
 
 @api_view(['GET'])
 @authentication_classes([TokenAuthViaCookie, BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def workoutslog(request):
+    # TODO: make more efficient
     user = request.user
     workouts = Workout.objects.filter(user=user)
     workouts_data = []

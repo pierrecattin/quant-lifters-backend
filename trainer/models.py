@@ -29,10 +29,23 @@ class ExerciseFamily(models.Model):
     name = models.CharField(max_length=100, unique=True)
     primary_bodyparts = models.ManyToManyField(Bodypart, related_name="primary_bodyparts", through='ExerciseFamilyPrimaryBodypart')
     secondary_bodyparts = models.ManyToManyField(Bodypart, related_name="secondary_bodyparts",  through='ExerciseFamilySecondaryBodypart')
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    shared_with = models.ManyToManyField(User, related_name="exercise_family_shared_with", through='ExerciseFamilySharedWith')
+    
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['name', 'created_by'], name='unique_name_created_by_combination_exercise_family')
+        ]
 
     def __str__(self):
         return self.name
+    
+    def is_custom(self):
+        return self.created_by is not None
 
+class ExerciseFamilySharedWith(models.Model):
+    exercise_family = models.ForeignKey(ExerciseFamily, on_delete=models.CASCADE)
+    shared_with = models.ForeignKey(User, on_delete=models.CASCADE)
 
 class ExerciseFamilyPrimaryBodypart(models.Model):
     exercise_family = models.ForeignKey(ExerciseFamily, on_delete=models.CASCADE)
