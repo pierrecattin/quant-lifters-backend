@@ -219,4 +219,4 @@ def create_exercise_family(request):
 @authentication_classes([TokenAuthViaCookie, BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def all_rankings(request):
-    return HttpResponse(dumps({"AllRankings":get_all_rankings()}))
+    return HttpResponse(dumps({"rankings":get_all_rankings()}))
