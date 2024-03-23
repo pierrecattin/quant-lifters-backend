@@ -220,3 +220,9 @@ def create_exercise_family(request):
 @permission_classes([IsAuthenticated])
 def all_rankings(request):
     return HttpResponse(dumps({"rankings":get_all_rankings()}))
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthViaCookie, BasicAuthentication])
+@permission_classes([IsAuthenticated])
+def all_rankings_per_exercise(request, exercise_id):
+    return HttpResponse(dumps({"rankings":get_all_rankings_per_exercise(exercise_id)}))
