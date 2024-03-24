@@ -6,7 +6,7 @@
   - QUANT_LIFTERS_UI_URL: http://localhost:3000
   - QUANT_LIFTERS_DJANGO_SECRET_KEY: Generate one with `python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"`
 - In repo root, run `python manage.py createsuperuser` and fill required data.
-- run `python manage.py makemigrations trainer; python manage.py migrate`. Also rerun this if you change the data model.
+- run `python manage.py migrate`. Also run this after pulling changes of the data model (i.e. new migration files).
 
 # Run the backend locally
 - In repo root, run `python manage.py runserver` (or start with VS code run and debug)
