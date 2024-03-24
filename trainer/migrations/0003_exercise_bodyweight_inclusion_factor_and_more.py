@@ -28,7 +28,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='exerciseset',
             name='weight',
-            field=models.DecimalField(decimal_places=2, max_digits=4),
+            field=models.DecimalField(decimal_places=2, max_digits=6),
         ),
         migrations.AddConstraint(
             model_name='exercise',
