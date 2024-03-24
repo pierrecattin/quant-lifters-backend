@@ -171,6 +171,34 @@ def update_exercise_sets(request):
 @api_view(['POST'])
 @authentication_classes([TokenAuthViaCookie, BasicAuthentication])
 @permission_classes([IsAuthenticatedOrReadOnly])
+def create_custom_exercise(request):
+    data = JSONParser().parse(request)
+    exercise = Exercise(name=data['name'],
+                        is_unilateral = data['is_unilateral'],
+                        exercise_family=ExerciseFamily.objects.get(pk = data['family_id']),
+                        weight_factor = data['weight_factor'],
+                        bodyweight_inclusion_factor = data['bodyweight_inclusion_factor'],
+                        created_by = request.user
+                        )
+    exercise.save()
+    return HttpResponse(dumps(ExerciseSerializer(exercise).data)) 
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthViaCookie, BasicAuthentication])
+@permission_classes([IsAuthenticatedOrReadOnly])
+def create_custom_exercise_family(request):
+    data = JSONParser().parse(request)
+    exercise_family = ExerciseFamily(name=data['name'],
+                                     created_by=request.user)
+    exercise_family.save()
+    [exercise_family.primary_bodyparts.add(Bodypart.objects.get(name=b)) for b in data['primary_bodyparts']]
+    [exercise_family.secondary_bodyparts.add(Bodypart.objects.get(name=b)) for b in data['secondary_bodyparts']]
+    exercise_family.save()
+    return HttpResponse(dumps(ExerciseFamilySerializer(exercise_family).data))
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthViaCookie, BasicAuthentication])
+@permission_classes([IsAuthenticatedOrReadOnly])
 def delete_exercise_sets(request):
     # TODO: prevent deleting sets of other users
     data = JSONParser().parse(request)

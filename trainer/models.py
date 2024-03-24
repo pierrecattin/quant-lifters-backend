@@ -26,7 +26,7 @@ class Bodypart(models.Model):
 
    
 class ExerciseFamily(models.Model):
-    name = models.CharField(max_length=100, unique=True)
+    name = models.CharField(max_length=100)
     primary_bodyparts = models.ManyToManyField(Bodypart, related_name="primary_bodyparts", through='ExerciseFamilyPrimaryBodypart')
     secondary_bodyparts = models.ManyToManyField(Bodypart, related_name="secondary_bodyparts",  through='ExerciseFamilySecondaryBodypart')
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
@@ -64,13 +64,22 @@ class ExerciseFamilySecondaryBodypart(models.Model):
 class Exercise(models.Model):
     name = models.CharField(max_length=100)
     is_unilateral = models.BooleanField(default=False)
+    weight_factor = models.DecimalField(decimal_places=2, 
+                                        max_digits=4, 
+                                        default=1)
+    bodyweight_inclusion_factor = models.DecimalField(decimal_places=2, 
+                                                      max_digits=4, 
+                                                      default=1)
     exercise_family = models.ForeignKey(ExerciseFamily, on_delete=models.CASCADE)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     shared_with = models.ManyToManyField(User, related_name="shared_with", through='ExerciseSharedWith')
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['name', 'created_by'], name='unique_name_created_by_combination')
+            models.UniqueConstraint(fields=['name', 'created_by'], name='unique_name_created_by_combination'),
+            models.CheckConstraint(check=models.Q(bodyweight_inclusion_factor__gte=0), name="bodyweight_inclusion_factor>=0"),
+            models.CheckConstraint(check=models.Q(bodyweight_inclusion_factor__lte=1), name="bodyweight_inclusion_factor<=0"),
+            models.CheckConstraint(check=models.Q(weight_factor__gte=0), name="weight_factor>=0"),
         ]
 
     def __str__(self):
@@ -95,7 +104,7 @@ class Workout(models.Model):
 class ExerciseSet(models.Model):
     workout = models.ForeignKey(Workout, on_delete=models.CASCADE)
     exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
-    weight = models.DecimalField(decimal_places=1, max_digits=4)
+    weight = models.DecimalField(decimal_places=2, max_digits=4)
     reps = models.IntegerField()
     rir = models.IntegerField(blank=True)
     

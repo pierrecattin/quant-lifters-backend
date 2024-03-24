@@ -36,6 +36,8 @@ class ExerciseSerializer(serializers.Serializer):
     shared_with = CompactUserSerializer(many=True)
     is_custom = serializers.SerializerMethodField()
     exercise_family = ExerciseFamilySerializer()
+    weight_factor = serializers.DecimalField(max_digits=5, decimal_places=2)
+    bodyweight_inclusion_factor = serializers.DecimalField(max_digits=5, decimal_places=2)
 
     def get_is_custom(self, exercise):
         return exercise.is_custom()
