@@ -69,7 +69,7 @@ class Exercise(models.Model):
                                         default=1)
     bodyweight_inclusion_factor = models.DecimalField(decimal_places=2, 
                                                       max_digits=4, 
-                                                      default=1)
+                                                      default=0)
     exercise_family = models.ForeignKey(ExerciseFamily, on_delete=models.CASCADE)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     shared_with = models.ManyToManyField(User, related_name="shared_with", through='ExerciseSharedWith')
