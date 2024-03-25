@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_exempt
 from json import dumps
 from rest_framework.authtoken.models import Token
@@ -168,18 +168,28 @@ def update_exercise_sets(request):
     response = [ExerciseSetSerializerWithWorkout(s).data for s in exercise_sets]
     return HttpResponse(dumps(response))
 
+
 @api_view(['POST'])
 @authentication_classes([TokenAuthViaCookie, BasicAuthentication])
 @permission_classes([IsAuthenticatedOrReadOnly])
 def create_custom_exercise(request):
     data = JSONParser().parse(request)
-    exercise = Exercise(name=data['name'],
-                        is_unilateral = data['is_unilateral'],
-                        exercise_family=ExerciseFamily.objects.get(pk = data['family_id']),
-                        weight_factor = data['weight_factor'],
-                        bodyweight_inclusion_factor = data['bodyweight_inclusion_factor'],
-                        created_by = request.user
-                        )
+    exercise_exists = Exercise.objects.filter(name=data['name'], created_by=request.user).exists()
+    if exercise_exists:
+        return HttpResponse(dumps({"error": "An exercise with this name already exists."}), status=409)
+    try:
+        exercise_family = ExerciseFamily.objects.get(pk=data['family_id'])
+    except ExerciseFamily.DoesNotExist:
+        return HttpResponseBadRequest(dumps({"error": "Exercise family does not exist"}), status=404 )
+    
+    exercise = Exercise(
+        name=data['name'],
+        is_unilateral=data['is_unilateral'],
+        exercise_family=exercise_family,
+        weight_factor=data['weight_factor'],
+        bodyweight_inclusion_factor=data['bodyweight_inclusion_factor'],
+        created_by=request.user
+    )
     exercise.save()
     return HttpResponse(dumps(ExerciseSerializer(exercise).data)) 
 
@@ -188,6 +198,9 @@ def create_custom_exercise(request):
 @permission_classes([IsAuthenticatedOrReadOnly])
 def create_custom_exercise_family(request):
     data = JSONParser().parse(request)
+    family_exists = ExerciseFamily.objects.filter(name=data['name'], created_by=request.user).exists()
+    if family_exists:
+        return HttpResponse(dumps({"error": "An exercise family with this name already exists."}), status=409)
     exercise_family = ExerciseFamily(name=data['name'],
                                      created_by=request.user)
     exercise_family.save()
