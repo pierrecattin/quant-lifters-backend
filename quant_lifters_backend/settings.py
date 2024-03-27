@@ -77,24 +77,18 @@ WSGI_APPLICATION = 'quant_lifters_backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-if 'QUANT_LIFTERS_PROD' in environ:
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.postgresql",
-            'NAME': 'quant_lifters',
-            'USER': 'quant_lifters_user',
-            'PASSWORD': environ['QUANT_LIFTERS_POSTGRE_PASSWORD'],
-            'HOST': environ['QUANT_LIFTERS_POSTGRE_URL'],
-            'PORT': '5432',
-        }
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        'NAME': 'quant_lifters',
+        'USER': 'postgres',
+        'PASSWORD': 'postgres',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
-else:
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
+}
+
 
 
 # Password validation
