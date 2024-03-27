@@ -28,8 +28,9 @@
 - Visit http://127.0.0.1:8000/admin/ and enter your superuser credentials
 
 # Copy prod data into local db
-In PowerShell (passwords need to be properly set before - works out-of-the box if pgAdmin is connected to prod db): 
-  - run `psql -U postgres`
-  - enter superuser password `postgres`
-  - run `pg_dump -C -h [remote host address] -U quant_lifters_read_only_user quant_lifters | psql -h localhost -U postgres quant_lifters`
-  - run `exit`
+  # one-time set up:
+  create a file `pgpass.conf` and put it into the user's AppData directory. e.g. `C:\Users\[username]\AppData\Roaming\postgresql\pgpass.conf`. Content of the file: `[remote host address]:quant_lifters:quant_lifters_read_only_user:[password]`
+  # to copy the data
+  - delete local database and create a fresh empty one (via pgAdmin or psql)
+  - In PowerShell run `pg_dump -C -c -h [remote host address] -U quant_lifters_read_only_user quant_lifters | psql -h localhost -U postgres quant_lifters`
+  - enter local superuser password `postgres`
