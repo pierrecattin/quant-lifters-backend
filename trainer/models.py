@@ -107,6 +107,7 @@ class ExerciseSet(models.Model):
     weight = models.DecimalField(decimal_places=2, max_digits=6)
     reps = models.IntegerField()
     rir = models.IntegerField(blank=True)
+    number_within_workout = models.IntegerField()
     
     @property
     def wilksScore(self):

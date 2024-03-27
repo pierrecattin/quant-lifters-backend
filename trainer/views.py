@@ -143,7 +143,8 @@ def save_exercise_sets(request):
                                    exercise=exercise,
                                    reps=int(set_data["reps"]),
                                    weight=float(set_data["weight"]),
-                                   rir=int(set_data["rir"]))
+                                   rir=int(set_data["rir"]),
+                                   number_within_workout=int(set_data["number_within_workout"]))
         exercise_set.save()
         exercise_sets.append(exercise_set)
     response = [ExerciseSetSerializerWithWorkout(s).data for s in exercise_sets]

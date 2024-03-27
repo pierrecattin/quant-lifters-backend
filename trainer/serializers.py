@@ -57,6 +57,7 @@ class ExerciseSetSerializerWithWorkout(serializers.Serializer):
     reps = serializers.IntegerField()
     rir = serializers.IntegerField()
     wilksScore = serializers.DecimalField(max_digits=5, decimal_places=2)
+    number_within_workout = serializers.IntegerField()
 
 class ExerciseSetSerializerWithExercise(serializers.Serializer):
     id = serializers.IntegerField()
@@ -65,3 +66,4 @@ class ExerciseSetSerializerWithExercise(serializers.Serializer):
     reps = serializers.IntegerField()
     rir = serializers.IntegerField()
     wilksScore = serializers.DecimalField(max_digits=5, decimal_places=2)
+    number_within_workout = serializers.IntegerField()
