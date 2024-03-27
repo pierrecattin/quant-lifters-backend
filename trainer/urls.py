@@ -21,4 +21,5 @@ urlpatterns = [
     path("userdetails", views.user_details, name="userdetails"),
     path("allrankings", views.all_rankings, name="allrankings"),
     path("allrankingsperexercise/<int:exercise_id>", views.all_rankings_per_exercise, name="allrankingsperexercise"),
+    path("rankingsperexercise", views.rankings_per_exercise, name="rankingsperexercise"),
 ]

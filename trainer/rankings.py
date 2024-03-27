@@ -1,5 +1,8 @@
 from trainer.models import *
 from django.db.models import Count, Sum, F, Func, FloatField
+from django.db import connection
+
+from pathlib import Path
 
 def ranking_query_set_to_json(query_set, ranking_label, score_label, user_header, score_header, details_label = None , details_header = None):
     users = [q[user_header] for q in query_set]
@@ -97,3 +100,21 @@ def get_all_rankings_per_exercise(exercise_id):
         ranking_query_set_to_json(most_exercise_sets_query.all(), 'Most Active Lifter', 'Total number of sets', 'workout__user__username', 'number_sets'),
         total_lifted_volume_query_to_json(total_lifted_volume_query.all(), 'King of Volume', 'Total lifted volume in kg', 'workout__user__username', 'volume')
     ]
+
+def dictfetchall(cursor): 
+    "Returns all rows from a cursor as a dict" 
+    desc = cursor.description 
+    return [
+            dict(zip([col[0] for col in desc], row)) 
+            for row in cursor.fetchall() 
+    ]
+
+def get_rankings_per_exercise():
+    fd = open(Path(__file__).parent / 'sql_queries/rankings_per_exercise.sql', 'r')
+    sql_query = fd.read()
+    fd.close()
+    
+    cursor = connection.cursor()
+    cursor.execute(sql_query)
+    data = dictfetchall(cursor)
+    return {data}

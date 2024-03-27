@@ -267,3 +267,9 @@ def all_rankings(request):
 @permission_classes([IsAuthenticated])
 def all_rankings_per_exercise(request, exercise_id):
     return HttpResponse(dumps({"rankings":get_all_rankings_per_exercise(exercise_id)}))
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthViaCookie, BasicAuthentication])
+@permission_classes([IsAuthenticated])
+def rankings_per_exercise(request):
+    return HttpResponse(dumps({"rankings":get_rankings_per_exercise()}))
