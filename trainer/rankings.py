@@ -101,7 +101,7 @@ def get_all_rankings_per_exercise(exercise_id):
         total_lifted_volume_query_to_json(total_lifted_volume_query.all(), 'King of Volume', 'Total lifted volume in kg', 'workout__user__username', 'volume')
     ]
 
-def dictfetchall(cursor): 
+def dict_fetch_all(cursor): 
     "Returns all rows from a cursor as a dict" 
     desc = cursor.description 
     return [
@@ -109,12 +109,23 @@ def dictfetchall(cursor):
             for row in cursor.fetchall() 
     ]
 
-def get_rankings_per_exercise():
+
+def get_exercise_ranking_data():
     fd = open(Path(__file__).parent / 'sql_queries/rankings_per_exercise.sql', 'r')
     sql_query = fd.read()
     fd.close()
     
     cursor = connection.cursor()
     cursor.execute(sql_query)
-    data = dictfetchall(cursor)
-    return {data}
+    data = dict_fetch_all(cursor)
+    exercise_Ids_and_names = list(set([(d['exercise_id'],d['exercise_name']) for d in data]))
+    
+    return [
+        {
+            'exerciseId': e[0],
+            'exerciseName': e[1],
+            'rankingDataPerUser': [d for d in data if d['exercise_id'] == e[0]]
+        }
+        for e in exercise_Ids_and_names
+    ]
+
